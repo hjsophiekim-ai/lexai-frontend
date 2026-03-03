@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,7 @@ export default function ContactPage() {
   const [header, setHeader] = useState<AdminContent | null>(null);
 
   // 상단 타이틀/설명을 CMS에서 가져온다.
-  React.useEffect(() => {
+  useEffect(() => {
     const apiBase = getApiBase();
     fetch(`${apiBase}/admin/content/contact`, { cache: "no-store" })
       .then(async (res) => {
@@ -30,11 +30,13 @@ export default function ContactPage() {
       .catch(() => undefined);
   }, []);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+
     // 더미: 실제 POST는 하지 않고 성공 토스트만
     await new Promise((r) => setTimeout(r, 600));
+
     toast.success("문의가 접수되었습니다. 담당자가 연락드리겠습니다.");
     setName("");
     setEmail("");
@@ -49,8 +51,7 @@ export default function ContactPage() {
           {header?.heroTitle ?? "문의"}
         </h1>
         <p className="mt-4 text-muted-foreground">
-          {header?.heroSubtitle ??
-            "요금제·기술 문의는 아래 폼으로 보내주세요."}
+          {header?.heroSubtitle ?? "요금제·기술 문의는 아래 폼으로 보내주세요."}
         </p>
       </div>
 
@@ -59,6 +60,7 @@ export default function ContactPage() {
           <CardTitle>문의하기</CardTitle>
           <CardDescription>이름, 이메일, 문의 내용을 입력해 주세요.</CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
@@ -71,6 +73,7 @@ export default function ContactPage() {
                 required
               />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">이메일</Label>
               <Input
@@ -82,6 +85,7 @@ export default function ContactPage() {
                 required
               />
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="message">문의 내용</Label>
               <textarea
@@ -93,6 +97,7 @@ export default function ContactPage() {
                 className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
+
             <Button type="submit" disabled={submitting} className="w-full rounded-xl">
               {submitting ? "전송 중…" : "제출"}
             </Button>
