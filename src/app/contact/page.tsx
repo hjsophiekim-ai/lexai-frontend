@@ -3,45 +3,72 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import type { AdminContent } from "@/lib/api";
 import { getApiBase } from "@/lib/api";
 
 export default function ContactPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [header, setHeader] = useState<AdminContent | null>(null);
 
-  // 상단 타이틀/설명을 CMS에서 가져온다.
   useEffect(() => {
-    const apiBase = getApiBase();
-    fetch(`${apiBase}/admin/content/contact`, { cache: "no-store" })
-      .then(async (res) => {
-        if (!res.ok) return null;
-        return (await res.json()) as AdminContent;
-      })
-      .then((data) => {
-        if (data) setHeader(data);
-      })
-      .catch(() => undefined);
+    let cancelled = false;
+
+    const fetchHeader = async () => {
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/admin/content/contact`, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) return;
+
+        const data: AdminContent = await res.json();
+
+        if (!cancelled) {
+          setHeader(data);
+        }
+      } catch {
+        // 에러 무시 (빌드 안정성)
+      }
+    };
+
+    fetchHeader();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting) return;
+
     setSubmitting(true);
 
-    // 더미: 실제 POST는 하지 않고 성공 토스트만
-    await new Promise((r) => setTimeout(r, 600));
+    try {
+      // 실제 POST 대신 더미 딜레이
+      await new Promise((resolve) => setTimeout(resolve, 600));
 
-    toast.success("문의가 접수되었습니다. 담당자가 연락드리겠습니다.");
-    setName("");
-    setEmail("");
-    setMessage("");
-    setSubmitting(false);
+      toast.success("문의가 접수되었습니다. 담당자가 연락드리겠습니다.");
+
+      setName("");
+      setEmail("");
+      setMessage("");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -58,7 +85,9 @@ export default function ContactPage() {
       <Card className="rounded-2xl border-2">
         <CardHeader>
           <CardTitle>문의하기</CardTitle>
-          <CardDescription>이름, 이메일, 문의 내용을 입력해 주세요.</CardDescription>
+          <CardDescription>
+            이름, 이메일, 문의 내용을 입력해 주세요.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -98,7 +127,11 @@ export default function ContactPage() {
               />
             </div>
 
-            <Button type="submit" disabled={submitting} className="w-full rounded-xl">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full rounded-xl"
+            >
               {submitting ? "전송 중…" : "제출"}
             </Button>
           </form>
