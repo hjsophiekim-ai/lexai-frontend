@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -30,23 +30,36 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
 
   const isLogin = pathname === "/admin/login";
 
   useEffect(() => {
-    if (isLogin) return;
+    if (isLogin) {
+      setAuthChecked(true);
+      return;
+    }
     const token =
       typeof window !== "undefined"
         ? window.localStorage.getItem(TOKEN_KEY)
         : null;
     if (!token) {
       router.replace("/admin/login");
+      return;
     }
+    setAuthChecked(true);
   }, [isLogin, router]);
 
   if (isLogin) {
-    // 로그인 화면은 별도 레이아웃(사이드바/탑바 없이)으로 노출
     return <>{children}</>;
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-muted/20">
+        <p className="text-sm text-muted-foreground">인증 확인 중…</p>
+      </div>
+    );
   }
 
   const handleLogout = () => {
@@ -106,7 +119,7 @@ export default function AdminLayout({
             </p>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>임시 계정: admin / lexai-admin</span>
+            <span>로그인된 관리자</span>
           </div>
         </header>
         <main className="flex-1 overflow-auto px-6 py-6">{children}</main>

@@ -79,6 +79,15 @@ export default async function AboutPage() {
 
       <Card className="rounded-2xl border-2">
         <CardHeader>
+          <CardTitle>{sections[1]?.title ?? "기술 개발 배경"}</CardTitle>
+        </CardHeader>
+        <CardContent className="text-muted-foreground whitespace-pre-wrap">
+          <p>{sections[1]?.description ?? defaultAboutContent.sections![1].description}</p>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-2xl border-2">
+        <CardHeader>
           <CardTitle>{sections[2]?.title ?? "특허·지식재산"}</CardTitle>
         </CardHeader>
         <CardContent className="text-muted-foreground whitespace-pre-wrap">

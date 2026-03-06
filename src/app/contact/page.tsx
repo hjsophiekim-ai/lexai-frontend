@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +25,7 @@ export default function ContactPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const fetchHeader = async () => {
+    const loadHeader = async () => {
       try {
         const apiBase = getApiBase();
         const res = await fetch(`${apiBase}/admin/content/contact`, {
@@ -34,17 +34,14 @@ export default function ContactPage() {
 
         if (!res.ok) return;
 
-        const data: AdminContent = await res.json();
-
-        if (!cancelled) {
-          setHeader(data);
-        }
+        const data = (await res.json()) as AdminContent;
+        if (!cancelled) setHeader(data);
       } catch {
         // 에러 무시 (빌드 안정성)
       }
     };
 
-    fetchHeader();
+    loadHeader();
 
     return () => {
       cancelled = true;
@@ -58,11 +55,8 @@ export default function ContactPage() {
     setSubmitting(true);
 
     try {
-      // 실제 POST 대신 더미 딜레이
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
+      await new Promise((r) => setTimeout(r, 600));
       toast.success("문의가 접수되었습니다. 담당자가 연락드리겠습니다.");
-
       setName("");
       setEmail("");
       setMessage("");

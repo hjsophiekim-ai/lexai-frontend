@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getApiBase } from "@/lib/api";
-
-type State = "CHECKING" | "OK" | "DOWN";
+import { getApiBase, healthCheck } from "@/lib/api";
 
 export default function StatusPage() {
-  const apiBase = getApiBase(); // ✅ 환경변수 NEXT_PUBLIC_API_BASE 사용
-
-  const [state, setState] = useState<State>("CHECKING");
+  const [state, setState] = useState<"CHECKING" | "OK" | "DOWN">("CHECKING");
   const [msg, setMsg] = useState("");
+  const [apiBase, setApiBase] = useState<string>("");
 
   useEffect(() => {
     let alive = true;
@@ -19,14 +16,25 @@ export default function StatusPage() {
       setMsg("");
 
       try {
-        const res = await fetch(`${apiBase}/health`, { cache: "no-store" });
-        const text = await res.text();
+        const base = getApiBase();
+        if (alive) setApiBase(base);
+        if (typeof window !== "undefined") {
+          // eslint-disable-next-line no-console
+          console.info("[LexAI] /status using API_BASE =", base);
+        }
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}: ${text}`);
-
+        const result = await healthCheck();
         if (!alive) return;
-        setState("OK");
-        setMsg(text || "ok");
+        setState(result.ok ? "OK" : "DOWN");
+        if (result.ok) {
+          setMsg(
+            result.data
+              ? JSON.stringify(result.data, null, 2)
+              : "OK (no payload)",
+          );
+        } else {
+          setMsg(result.error ?? "Unknown error");
+        }
       } catch (e: unknown) {
         const err = e instanceof Error ? e.message : String(e);
         if (!alive) return;
@@ -38,7 +46,7 @@ export default function StatusPage() {
     return () => {
       alive = false;
     };
-  }, [apiBase]);
+  }, []);
 
   return (
     <main style={{ padding: 40, fontFamily: "system-ui" }}>

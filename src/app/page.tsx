@@ -19,6 +19,16 @@ const defaultHomeContent: AdminContent = {
     "구조적 위치 기반 AI 생성 콘텐츠 변경 추적 및 기여도 분석 시스템",
   ctaPrimary: "데모 체험하기",
   ctaSecondary: "API 문서 보기",
+  badgeText: "Beta 서비스 오픈: 2026.02",
+  heroExtra: "AI 콘텐츠의 생성·편집 이력을 범위 기반으로 역추적하십시오.",
+  sectionHeading: "핵심 기능",
+  sectionSubheading:
+    "오프셋 기반 인덱싱과 역방향 쿼리로 정확한 변경 이력을 추적합니다.",
+  industryLabel: "적용 산업",
+  industryItems: "LegalTech, 콘텐츠 플랫폼, 언론사, 교육 플랫폼",
+  ctaSectionHeading: "지금 바로 체험해 보세요.",
+  ctaSectionPrimary: "데모 체험하기",
+  ctaSectionSecondary: "문의하기",
   sections: [
     {
       title: "Version Tracking",
@@ -54,6 +64,12 @@ export default async function LandingPage() {
   const content = await getHomeContent();
   const sections = content.sections ?? defaultHomeContent.sections!;
 
+  const industryList = (content.industryItems ?? defaultHomeContent.industryItems ?? "")
+    .split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const fallbackIndustry = ["LegalTech", "콘텐츠 플랫폼", "언론사", "교육 플랫폼"];
+
   return (
     <div className="relative">
       {/* Hero */}
@@ -61,7 +77,7 @@ export default async function LandingPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:24px_24px]" />
         <div className="container relative mx-auto text-center">
           <Badge variant="secondary" className="mb-4">
-            Beta 서비스 오픈: 2026.02
+            {content.badgeText ?? defaultHomeContent.badgeText ?? "Beta 서비스 오픈: 2026.02"}
           </Badge>
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
             {content.heroTitle}
@@ -70,7 +86,7 @@ export default async function LandingPage() {
             {content.heroSubtitle}
           </p>
           <p className="mx-auto mt-6 max-w-xl text-base text-foreground/90">
-            AI 콘텐츠의 생성·편집 이력을 범위 기반으로 역추적하십시오.
+            {content.heroExtra ?? defaultHomeContent.heroExtra ?? "AI 콘텐츠의 생성·편집 이력을 범위 기반으로 역추적하십시오."}
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Button asChild size="lg" className="rounded-xl">
@@ -91,10 +107,10 @@ export default async function LandingPage() {
       {/* 3 Feature cards */}
       <section className="container px-4 py-16 md:py-24">
         <h2 className="text-center text-2xl font-semibold md:text-3xl">
-          핵심 기능
+          {content.sectionHeading ?? defaultHomeContent.sectionHeading ?? "핵심 기능"}
         </h2>
         <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">
-          오프셋 기반 인덱싱과 역방향 쿼리로 정확한 변경 이력을 추적합니다.
+          {content.sectionSubheading ?? defaultHomeContent.sectionSubheading ?? "오프셋 기반 인덱싱과 역방향 쿼리로 정확한 변경 이력을 추적합니다."}
         </p>
         <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-3">
           <Card className="rounded-2xl border-2 shadow-sm transition-shadow hover:shadow-md">
@@ -146,10 +162,10 @@ export default async function LandingPage() {
       <section className="border-y border-border/40 bg-muted/30 px-4 py-12">
         <div className="container">
           <p className="text-center text-sm font-medium text-muted-foreground">
-            적용 산업
+            {content.industryLabel ?? defaultHomeContent.industryLabel ?? "적용 산업"}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            {["LegalTech", "콘텐츠 플랫폼", "언론사", "교육 플랫폼"].map((name) => (
+            {(industryList.length > 0 ? industryList : fallbackIndustry).map((name) => (
               <Badge key={name} variant="secondary" className="rounded-full px-4 py-2 text-sm">
                 {name}
               </Badge>
@@ -160,13 +176,19 @@ export default async function LandingPage() {
 
       {/* CTA */}
       <section className="container px-4 py-16 text-center">
-        <p className="text-muted-foreground">지금 바로 체험해 보세요.</p>
+        <p className="text-muted-foreground">
+          {content.ctaSectionHeading ?? defaultHomeContent.ctaSectionHeading ?? "지금 바로 체험해 보세요."}
+        </p>
         <div className="mt-4 flex justify-center gap-4">
           <Button asChild>
-            <Link href="/demo">데모 체험하기</Link>
+            <Link href="/demo">
+              {content.ctaSectionPrimary ?? defaultHomeContent.ctaSectionPrimary ?? "데모 체험하기"}
+            </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/contact">문의하기</Link>
+            <Link href="/contact">
+              {content.ctaSectionSecondary ?? defaultHomeContent.ctaSectionSecondary ?? "문의하기"}
+            </Link>
           </Button>
         </div>
       </section>

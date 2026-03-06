@@ -78,7 +78,15 @@ export function Footer() {
         </div>
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground md:flex-row">
           <span>© {new Date().getFullYear()} LexAI. All rights reserved.</span>
-          <span>{betaText}</span>
+          <div className="flex items-center gap-4">
+            <span>{betaText}</span>
+            <Link
+              href="/admin"
+              className="underline hover:text-foreground"
+            >
+              관리자
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

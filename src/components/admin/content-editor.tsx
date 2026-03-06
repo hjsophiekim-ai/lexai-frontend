@@ -134,6 +134,9 @@ export function AdminContentEditor({
         <TabsList>
           <TabsTrigger value="hero">Hero / CTA</TabsTrigger>
           <TabsTrigger value="sections">섹션 리스트</TabsTrigger>
+          {pageId === "home" && (
+            <TabsTrigger value="homeExtra">홈 추가 문구</TabsTrigger>
+          )}
           <TabsTrigger value="preview">실시간 프리뷰</TabsTrigger>
         </TabsList>
 
@@ -253,6 +256,110 @@ export function AdminContentEditor({
           </Card>
         </TabsContent>
 
+        {pageId === "home" && (
+          <TabsContent value="homeExtra" className="space-y-4">
+            <Card className="rounded-2xl border-2">
+              <CardHeader>
+                <CardTitle>홈 추가 문구</CardTitle>
+                <CardDescription>
+                  랜딩 페이지의 배지, 히어로 보조 문구, 핵심 기능 섹션 제목, 적용 산업, 하단 CTA 문구를 수정합니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="badgeText">배지 문구 (badgeText)</Label>
+                  <Input
+                    id="badgeText"
+                    value={content.badgeText ?? ""}
+                    onChange={(e) => updateField("badgeText", e.target.value)}
+                    placeholder="예: Beta 서비스 오픈: 2026.02"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="heroExtra">히어로 보조 문구 (heroExtra)</Label>
+                  <Textarea
+                    id="heroExtra"
+                    value={content.heroExtra ?? ""}
+                    onChange={(e) => updateField("heroExtra", e.target.value)}
+                    rows={2}
+                    placeholder="예: AI 콘텐츠의 생성·편집 이력을 범위 기반으로 역추적하십시오."
+                  />
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <Label htmlFor="sectionHeading">핵심 기능 섹션 제목 (sectionHeading)</Label>
+                  <Input
+                    id="sectionHeading"
+                    value={content.sectionHeading ?? ""}
+                    onChange={(e) => updateField("sectionHeading", e.target.value)}
+                    placeholder="예: 핵심 기능"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sectionSubheading">핵심 기능 섹션 부제 (sectionSubheading)</Label>
+                  <Textarea
+                    id="sectionSubheading"
+                    value={content.sectionSubheading ?? ""}
+                    onChange={(e) => updateField("sectionSubheading", e.target.value)}
+                    rows={2}
+                    placeholder="예: 오프셋 기반 인덱싱과 역방향 쿼리로 정확한 변경 이력을 추적합니다."
+                  />
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <Label htmlFor="industryLabel">적용 산업 라벨 (industryLabel)</Label>
+                  <Input
+                    id="industryLabel"
+                    value={content.industryLabel ?? ""}
+                    onChange={(e) => updateField("industryLabel", e.target.value)}
+                    placeholder="예: 적용 산업"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="industryItems">적용 산업 목록 (industryItems, 쉼표 또는 줄바꿈 구분)</Label>
+                  <Textarea
+                    id="industryItems"
+                    value={content.industryItems ?? ""}
+                    onChange={(e) => updateField("industryItems", e.target.value)}
+                    rows={3}
+                    placeholder="예: LegalTech, 콘텐츠 플랫폼, 언론사, 교육 플랫폼"
+                  />
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <Label htmlFor="ctaSectionHeading">하단 CTA 섹션 제목 (ctaSectionHeading)</Label>
+                  <Input
+                    id="ctaSectionHeading"
+                    value={content.ctaSectionHeading ?? ""}
+                    onChange={(e) => updateField("ctaSectionHeading", e.target.value)}
+                    placeholder="예: 지금 바로 체험해 보세요."
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="ctaSectionPrimary">하단 CTA 버튼 1 (ctaSectionPrimary)</Label>
+                    <Input
+                      id="ctaSectionPrimary"
+                      value={content.ctaSectionPrimary ?? ""}
+                      onChange={(e) => updateField("ctaSectionPrimary", e.target.value)}
+                      placeholder="예: 데모 체험하기"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ctaSectionSecondary">하단 CTA 버튼 2 (ctaSectionSecondary)</Label>
+                    <Input
+                      id="ctaSectionSecondary"
+                      value={content.ctaSectionSecondary ?? ""}
+                      onChange={(e) => updateField("ctaSectionSecondary", e.target.value)}
+                      placeholder="예: 문의하기"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
         <TabsContent value="preview">
           <Card className="rounded-2xl border-2">
             <CardHeader>
@@ -312,6 +419,22 @@ export function AdminContentEditor({
                   </p>
                 )}
               </div>
+
+              {pageId === "home" && (
+                <>
+                  <Separator />
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    홈 추가 문구
+                  </p>
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-left text-xs">
+                    <p><strong>배지:</strong> {content.badgeText || "(비어 있음)"}</p>
+                    <p className="mt-1"><strong>히어로 보조:</strong> {content.heroExtra || "(비어 있음)"}</p>
+                    <p className="mt-1"><strong>섹션 제목:</strong> {content.sectionHeading || "(비어 있음)"}</p>
+                    <p className="mt-1"><strong>적용 산업:</strong> {content.industryLabel || "(비어 있음)"} — {content.industryItems || "(비어 있음)"}</p>
+                    <p className="mt-1"><strong>하단 CTA:</strong> {content.ctaSectionHeading || "(비어 있음)"} / {content.ctaSectionPrimary || ""} / {content.ctaSectionSecondary || ""}</p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
